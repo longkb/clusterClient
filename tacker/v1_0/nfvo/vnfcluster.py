@@ -20,7 +20,7 @@ _CLUSTER_MEMBER = 'clustermember'
 class ListCluster(tackerV10.ListCommand):
     """List Clusters that belong to a given tenant."""
     resource = _CLUSTER
-    list_columns = ['id', 'name', 'description', 'status', 'vnfd_id', 'lb_id' ]
+    list_columns = ['id', 'name', 'description', 'status', 'vnfd_id', 'role_config' ]
 
 class ShowCluster(tackerV10.ShowCommand):
     """Show information of a given Cluster."""
@@ -91,6 +91,9 @@ class AddClusterMember(tackerV10.CreateCommand):
         parser.add_argument(
             '--role',
             help='Set a [Active/Standby] role to cluster member', required = True)
+        parser.add_argument(
+            '--placement-attr',
+            help='Set vim to deploy cluster member')
 
     def args2body(self, parsed_args):
         body = {self.resource: {}}
@@ -106,7 +109,7 @@ class AddClusterMember(tackerV10.CreateCommand):
             parsed_args.vnfd_id = _id
 
         tackerV10.update_dict(parsed_args, body[self.resource],
-                              ['tenant_id', 'name', 'cluster_id', 'vnfd_id', 'role'])
+                              ['tenant_id', 'name', 'cluster_id', 'vnfd_id', 'role', 'placement_attr'])
         return body
 
 class UpdateClusterMember(tackerV10.UpdateCommand):
@@ -172,7 +175,7 @@ class ListClusterMember(tackerV10.ListCommand):
                               ['tenant_id', 'cluster_id'])
         return body
 
-    list_columns = ['id', 'name', 'cluster_id', 'role', 'placement_attr', 'lb_member_id', 'cp_id']
+    list_columns = ['id', 'name', 'cluster_id', 'role', 'placement_attr', 'lb_member_id']
 
 class DeleteClusterMember(tackerV10.DeleteCommand):
     """Delete a given VnfClusterMember."""
